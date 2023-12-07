@@ -3,12 +3,15 @@ package com.example.jwt.config.jwt;
 import com.example.jwt.config.auth.PrincipalDetails;
 import com.example.jwt.model.User;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jwts;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -20,9 +23,11 @@ import java.io.IOException;
 // login 요청해서 username, password 전송(post)하면 동작한다.
 @RequiredArgsConstructor
 @Setter
+@Slf4j
 public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
 
     private final AuthenticationManager authenticationManager;
+    private final JwtUtil jwtUtil;
 
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
@@ -49,6 +54,16 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 
     @Override
     protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authResult) throws IOException, ServletException {
+
+        PrincipalDetails principalDetails = (PrincipalDetails) authResult.getPrincipal();
+
+        Claims claims = Jwts.claims();
+        claims.put("username", principalDetails.getUsername());
+        String jwtToken = jwtUtil.generateToken(principalDetails);
+        log.info("토큰 생성 : " + jwtToken);
+
+        response.addHeader("Authorization", "Bearer "+jwtToken);
+
         super.successfulAuthentication(request, response, chain, authResult);
     }
 }

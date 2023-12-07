@@ -2,6 +2,7 @@ package com.example.jwt.config;
 
 
 import com.example.jwt.config.jwt.JwtAuthenticationFilter;
+import com.example.jwt.config.jwt.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -18,7 +19,7 @@ import org.springframework.security.web.SecurityFilterChain;
 public class SecurityConfig {
 
     private final CorsConfig corsConfig;
-
+    private final JwtUtil jwtUtil;
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -45,7 +46,7 @@ public class SecurityConfig {
         public void configure(HttpSecurity http) throws Exception {
             AuthenticationManager authenticationManager=http.getSharedObject(AuthenticationManager.class);
             http.addFilter(corsConfig.corsFilter())
-                    .addFilter(new JwtAuthenticationFilter(authenticationManager));  // AuthenticationManager를 Parameter로 넘겨줘야 함(로그인을 진행하는 데이터이기 때문)
+                    .addFilter(new JwtAuthenticationFilter(authenticationManager,jwtUtil));  // AuthenticationManager를 Parameter로 넘겨줘야 함(로그인을 진행하는 데이터이기 때문)
             System.out.println("authenticationManager3 : " + authenticationManager);
         }
     }
