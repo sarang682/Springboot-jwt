@@ -46,7 +46,7 @@ public class JwtUtil {
     /**
      * 토큰의 Claim 디코딩
      */
-    private Claims getAllClaims(String token) {
+    public Claims getAllClaims(String token) {
         log.info("getAllClaims token = {}", token);
         return Jwts.parser()
                 .setSigningKey(SECRET)

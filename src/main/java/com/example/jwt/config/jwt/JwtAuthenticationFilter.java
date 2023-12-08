@@ -26,7 +26,6 @@ import java.io.IOException;
 @Slf4j
 public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
 
-    private final AuthenticationManager authenticationManager;
     private final JwtUtil jwtUtil;
 
     @Override
@@ -39,7 +38,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 
             UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(user.getUsername(), user.getPassword());
 
-            Authentication authentication = authenticationManager.authenticate(authenticationToken);
+            Authentication authentication = getAuthenticationManager().authenticate(authenticationToken);
 
             PrincipalDetails principalDetails = (PrincipalDetails) authentication.getPrincipal();
 
